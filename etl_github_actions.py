@@ -1,5 +1,6 @@
 import os
 import json
+import base64
 import pandas as pd
 import mysql.connector
 from mysql.connector import Error
@@ -24,11 +25,14 @@ db_config = {
 }
 
 # ----------------- Google Sheets setup -----------------
-GSPREAD_CREDS = os.getenv('GOOGLE_CREDENTIALS_BASE64')
-if not GSPREAD_CREDS:
+GSPREAD_CREDS_BASE64 = os.getenv('GSPREAD_CREDENTIALS')
+if not GSPREAD_CREDS_BASE64:
     raise ValueError("Missing GSPREAD_CREDENTIALS secret in GitHub Actions")
 
-creds_dict = json.loads(GSPREAD_CREDS)
+# Decode Base64 secret
+GSPREAD_CREDS_JSON = base64.b64decode(GSPREAD_CREDS_BASE64).decode('utf-8')
+creds_dict = json.loads(GSPREAD_CREDS_JSON)
+
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 creds = service_account.Credentials.from_service_account_info(creds_dict, scopes=scope)
 client = gspread.authorize(creds)
