@@ -12,6 +12,7 @@ from datetime import datetime
 import pytz
 import logging
 import time
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type  # Add this import
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
@@ -112,14 +113,20 @@ def run_query(query):
     conn.close()
     return df
 
+@retry(
+    stop=stop_after_attempt(5),  # Retry up to 5 times
+    wait=wait_exponential(multiplier=1, min=5, max=60),  # Wait 5s, 10s, 20s, etc.
+    retry=retry_if_exception_type(gspread.exceptions.APIError),  # Retry only on API errors like 503
+    before_sleep=lambda retry_state: log.warning(f"Retrying due to API error: {retry_state.outcome.exception()} (attempt {retry_state.attempt_number})")
+)
 def paste_to_gsheet(df, sheet_key, worksheet_name):
     sheet = client.open_by_key(sheet_key)
     ws = sheet.worksheet(worksheet_name)
-    time.sleep(5)
+    time.sleep(5)  # Existing delay
     ws.clear()
     set_with_dataframe(ws, df, include_index=False)
     ts = datetime.now(pytz.timezone('Asia/Dhaka')).strftime("%Y-%m-%d %H:%M:%S")
-    time.sleep(2)
+    time.sleep(2)  # Existing delay
     ws.update(range_name="AC2", values=[[ts]])
     log.info(f"Pasted {worksheet_name} and updated timestamp {ts}")
 
@@ -163,6 +170,10 @@ try:
     output_sheet_key = "1R14HHEKtvjCznMmfhldZDppPRwznhNgM0c0P_3M54k4"
     paste_to_gsheet(df_issue_result, output_sheet_key, "DF_ISSUE")
     paste_to_gsheet(df_recv_result, output_sheet_key, "DF_RECV")
+
+except Exception as e:
+    log.error(f"ETL failed: {e}")
+    raise  # Re-raise to fail the action if all retries exhaust
 
 finally:
     cleanup_db()
