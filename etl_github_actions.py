@@ -167,7 +167,7 @@ try:
     df_recv_result = run_query(query_recv)
 
     # Paste results to 2 separate worksheets in the output Google Sheet
-    output_sheet_key = "1EX8Q4Ogywjz_r3pl85NVKwLZdoBxebPHfSkG0n0anLE"
+    output_sheet_key = "1aKwPLTW6oSd2Ret4M61xYz_CEqhHiP-mDs35fEt_UvU"
     paste_to_gsheet(df_issue_result, output_sheet_key, "DF_ISSUE")
     paste_to_gsheet(df_recv_result, output_sheet_key, "DF_RECV")
 
