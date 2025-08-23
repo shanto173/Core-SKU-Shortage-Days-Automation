@@ -1,0 +1,38 @@
+name: ETL Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: rm_shortage
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          pip install pandas mysql-connector-python gspread gspread-dataframe oauth2client pytz
+
+      - name: Run ETL script
+        env:
+          GSPREAD_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}
+        run: python etl_github_actions.py
