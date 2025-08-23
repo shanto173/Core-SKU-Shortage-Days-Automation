@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pandas mysql-connector-python gspread gspread-dataframe oauth2client pytz
+          pip install pandas mysql-connector-python gspread gspread-dataframe oauth2client pytz tenacity
 
       - name: Create creds file
         run: |
