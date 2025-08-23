@@ -279,7 +279,7 @@ client = gspread.authorize(creds)
 
 # Open the sheet for PCS data
 try:
-    sheet_issue = client.open_by_key("1R14HHEKtvjCznMmfhldZDppPRwznhNgM0c0P_3M54k4")
+    sheet_issue = client.open_by_key("1EX8Q4Ogywjz_r3pl85NVKwLZdoBxebPHfSkG0n0anLE")
     worksheet_issue = sheet_issue.worksheet("DF_ISSUE")
     if not has_issue_data:
         print("Skip: DataFrame (PCS) is empty or contains no valid data rows, not pasting to sheet.")
@@ -298,7 +298,7 @@ except Exception as e:
 
     # Open the sheet for USD data
 try:
-    sheet_recv = client.open_by_key("1R14HHEKtvjCznMmfhldZDppPRwznhNgM0c0P_3M54k4")
+    sheet_recv = client.open_by_key("1EX8Q4Ogywjz_r3pl85NVKwLZdoBxebPHfSkG0n0anLE")
     worksheet_recv = sheet_recv.worksheet("DF_RECV")
     if not has_recv_data:
         print("Skip: DataFrame (USD) is empty or contains no valid data rows, not pasting to sheet.")
