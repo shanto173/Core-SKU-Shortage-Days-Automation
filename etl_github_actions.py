@@ -117,10 +117,9 @@ def paste_to_gsheet(df, sheet_key, worksheet_name):
     ws = sheet.worksheet(worksheet_name)
     time.sleep(5)
     ws.clear()
-    time.sleep(5)
     set_with_dataframe(ws, df, include_index=False)
     ts = datetime.now(pytz.timezone('Asia/Dhaka')).strftime("%Y-%m-%d %H:%M:%S")
-    time.sleep(5)
+    time.sleep(2)
     ws.update(range_name="AC2", values=[[ts]])
     log.info(f"Pasted {worksheet_name} and updated timestamp {ts}")
 
