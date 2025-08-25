@@ -1,7 +1,10 @@
 name: ETL Workflow
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # manual trigger
+  schedule:
+    - cron: '0 3,4,5,6,7 * * *'   # 9AM,10AM,11AM,12PM,1PM BD (UTC+6)
+    - cron: '30 5,6 * * *'        # 11:30AM,12:30PM BD (UTC+6)
 
 jobs:
   etl:
